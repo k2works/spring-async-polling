@@ -8,8 +8,8 @@ import java.util.List;
 @Mapper
 public interface TaskMapper {
 
-    @Insert("INSERT INTO TASKS (amount,done) VALUES (#{task.amount},0)")
-    @SelectKey(statement = "CALL IDENTITY()", keyProperty = "task.id", before = false, resultType = int.class)
+    @Insert("INSERT INTO TASKS(amount, done) VALUES(#{task.amount}, 0)")
+    @Options(useGeneratedKeys = true, keyProperty = "task.id")
     public int insert(@Param("task") Task task);
 
     @Update("UPDATE TASKS SET done = #{task.done} WHERE id = #{task.id}")
