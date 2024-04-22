@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import com.example.Task;
+import com.example.model.HeavyJob;
 import com.example.services.TaskService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("api/tasks")
 public class TaskRestController {
     final TaskService service;
+    final HeavyJob heavyJob;
 
     @GetMapping
     public List<Task> showAll(){
@@ -25,6 +27,10 @@ public class TaskRestController {
 
     @PostMapping
     public Task execute() {
+        log.info("before heavyJob.execute()");
+        heavyJob.execute();
+        log.info("after heavyJob.execute()");
+
         Task task = service.register();
         service.execute(task.getId());
         return task;
