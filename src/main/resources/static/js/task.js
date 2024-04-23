@@ -61,7 +61,25 @@ $(function () {
             console.log(data)
             $("#result2").text(data.message)
         }).fail(function (jqXHR, textStatus) {
-            $("#result").text("失敗")
+            $("#result2").text("失敗")
+        })
+    })
+
+    $("#execBtn3").on("click", function () {
+        $("#result3").text("処理中");
+        $.ajax({
+            type: "PUT",
+            url: CONTEXT_PATH + "api/tasks/heavy3",
+            dataType: "json"
+        }).done(function (data) {
+            console.log(data)
+            var updatedList = "";
+            data.forEach(function (element, index, array) {
+                updatedList += `<tr><td>${element}</td><td>`;
+            });
+            $("#result3").after(updatedList);
+        }).fail(function (jqXHR, textStatus) {
+            $("#result3").text("失敗")
         })
     })
 

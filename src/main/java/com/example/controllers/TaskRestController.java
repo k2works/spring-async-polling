@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Slf4j
@@ -67,6 +70,34 @@ public class TaskRestController {
             return response;
         });
     }
+
+
+    @PutMapping("/heavy3")
+    public @ResponseBody List<String> exec3() throws InterruptedException, ExecutionException {
+        log.info("before heavyJob.execute3()");
+        CompletableFuture<String> light = heavyJob.execute2(10);
+        CompletableFuture<String> heavy = heavyJob.execute2(30);
+
+        light.thenAcceptAsync(result ->{
+            log.warn("light:" + result);
+        });
+
+        heavy.thenAcceptAsync(result ->{
+            log.warn("heavy:" + result);
+        });
+
+        CompletableFuture.allOf(light, heavy).join();
+
+        List<String> results = new ArrayList<>();
+        results.add(light.get());
+        results.add(heavy.get());
+
+        log.info("after heavyJob.execute3()");
+
+        return results;
+    }
+
+
 
     @GetMapping("/greeting")
     public SseEmitter greeting() throws IOException, InterruptedException {
