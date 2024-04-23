@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import com.example.Task;
+import com.example.model.GreetingMessageSender;
 import com.example.model.HeavyJob;
 import com.example.services.TaskService;
 import lombok.AllArgsConstructor;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Slf4j
 @RestController
@@ -24,6 +27,7 @@ import java.util.concurrent.CompletableFuture;
 public class TaskRestController {
     final TaskService service;
     final HeavyJob heavyJob;
+    final GreetingMessageSender greetingMessageSender;
 
     @GetMapping
     public List<Task> showAll(){
@@ -62,6 +66,13 @@ public class TaskRestController {
             response.put("message", value);
             return response;
         });
+    }
+
+    @GetMapping("/greeting")
+    public SseEmitter greeting() throws IOException, InterruptedException {
+        SseEmitter emitter = new SseEmitter();
+        greetingMessageSender.send(emitter);
+        return emitter;
     }
 }
 

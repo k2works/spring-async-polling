@@ -65,4 +65,17 @@ $(function () {
         })
     })
 
+    const sse = new EventSource('api/tasks/greeting');
+
+    sse.onmessage = function (event) {
+        console.log(event.data);
+        // ここで受け取ったデータを処理します。
+        $("#greeting").text(event.data);
+    };
+
+    sse.onerror = function (error) {
+        console.log('SSE error:', error);
+        sse.close();
+    };
+
 });
