@@ -36,15 +36,30 @@ $(function () {
         });
     });
 
-    $("#execBtn").on("click", function () {
+    $("#execBtn1").on("click", function () {
         $("#result").text("処理中");
         $.ajax({
             type: "PUT",
-            url: CONTEXT_PATH + "api/tasks",
+            url: CONTEXT_PATH + "api/tasks/heavy1",
             dataType: "json"
         }).done(function (data) {
             console.log(data)
-            $("#result").text(data.message)
+            $("#result1").text(data.message)
+        }).fail(function (jqXHR, textStatus) {
+            $("#result1").text("失敗")
+        })
+    });
+
+
+    $("#execBtn2").on("click", function () {
+        $("#result2").text("処理中");
+        $.ajax({
+            type: "PUT",
+            url: CONTEXT_PATH + "api/tasks/heavy2",
+            dataType: "json"
+        }).done(function (data) {
+            console.log(data)
+            $("#result2").text(data.message)
         }).fail(function (jqXHR, textStatus) {
             $("#result").text("失敗")
         })

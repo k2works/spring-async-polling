@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -36,11 +37,11 @@ public class TaskRestController {
         return task;
     }
 
-    @PutMapping
-    public @ResponseBody Map<String, String> exec() {
-        log.info("before heavyJob.execute()");
+    @PutMapping("/heavy1")
+    public @ResponseBody Map<String, String> exec1() {
+        log.info("before heavyJob.execute1()");
         heavyJob.execute(10);
-        log.info("after heavyJob.execute()");
+        log.info("after heavyJob.execute1()");
 
 
         Map<String, String> response = new HashMap<>();
@@ -48,5 +49,20 @@ public class TaskRestController {
         response.put("message", "完了");
         return response;
     }
+
+    @PutMapping("/heavy2")
+    public @ResponseBody CompletableFuture<Map<String, String>> exec2() {
+        log.info("before heavyJob.execute2()");
+        CompletableFuture<String> result = heavyJob.execute2(30);
+        log.info("after heavyJob.execute2()");
+
+        return result.thenApply(value -> {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "Success");
+            response.put("message", value);
+            return response;
+        });
+    }
 }
+
 
