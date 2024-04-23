@@ -23,4 +23,7 @@ public interface TaskService {
      * @return タスク一覧
      */
     public List<Task> status();
+
+    public Task start(int amount);
+    public void complete(Task task);
 }

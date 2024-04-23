@@ -3,6 +3,7 @@ package com.example.controllers;
 import com.example.Task;
 import com.example.model.GreetingMessageSender;
 import com.example.model.HeavyJob;
+import com.example.services.ExecuteService;
 import com.example.services.TaskService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +31,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("api/tasks")
 public class TaskRestController {
     final TaskService service;
+    final ExecuteService executeService;
     final HeavyJob heavyJob;
     final GreetingMessageSender greetingMessageSender;
 
@@ -97,6 +100,32 @@ public class TaskRestController {
         return results;
     }
 
+    @PutMapping("/heavy4")
+    public @ResponseBody Map<String, String> exec4() throws InterruptedException, ExecutionException {
+        log.info("before heavyJob.execute4()");
+        Task task = service.start(2);
+
+        CompletableFuture<String> light = heavyJob.execute2(10);
+        CompletableFuture<String> heavy = heavyJob.execute2(30);
+
+        light.thenAcceptAsync(result ->{
+            task.setDone(task.getDone() + 1);
+            log.warn("light:" + result + task.toString());
+            service.complete(task);
+        });
+
+        heavy.thenAcceptAsync(result ->{
+            task.setDone(task.getDone() + 1);
+            log.warn("heavy:" + result + task.toString());
+            service.complete(task);
+        });
+        log.info("after heavyJob.execute4()");
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "Success");
+        response.put("message", "非同期処理を開始しました");
+        return response;
+    }
 
 
     @GetMapping("/greeting")

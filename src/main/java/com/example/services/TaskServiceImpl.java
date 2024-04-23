@@ -60,4 +60,21 @@ public class TaskServiceImpl implements TaskService {
             service.execute(task);
         }
     }
+
+    @Override
+    @Transactional
+    public Task start(int amount) {
+        Task task = new Task();
+        task.setAmount(amount);
+        taskMapper.insert(task);
+
+        return task;
+    }
+
+    @Override
+    public void complete(Task task) {
+        Task upDataTask = taskMapper.findOne(task.getId());
+        upDataTask.setDone(upDataTask.getDone() + 1);
+        taskMapper.update(upDataTask);
+    }
 }

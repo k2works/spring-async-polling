@@ -77,11 +77,26 @@ $(function () {
             data.forEach(function (element, index, array) {
                 updatedList += `<tr><td>${element}</td><td>`;
             });
+            $("#result3").text("非同期処理を完了しました");
             $("#result3").after(updatedList);
         }).fail(function (jqXHR, textStatus) {
             $("#result3").text("失敗")
         })
     })
+
+    $("#execBtn4").on("click", function () {
+        $("#result4").text("処理中");
+        $.ajax({
+            type: "PUT",
+            url: CONTEXT_PATH + "api/tasks/heavy4",
+            dataType: "json"
+        }).done(function (data) {
+            console.log(data)
+            $("#result4").text(data.message)
+        }).fail(function (jqXHR, textStatus) {
+            $("#result4").text("失敗")
+        })
+    });
 
     const sse = new EventSource('api/tasks/greeting');
 
