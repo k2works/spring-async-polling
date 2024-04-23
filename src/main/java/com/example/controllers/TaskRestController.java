@@ -7,10 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,13 +31,22 @@ public class TaskRestController {
 
     @PostMapping
     public Task execute() {
-        log.info("before heavyJob.execute()");
-        heavyJob.execute();
-        log.info("after heavyJob.execute()");
-
         Task task = service.register();
         service.execute(task.getId());
         return task;
     }
 
+    @PutMapping
+    public @ResponseBody Map<String, String> exec() {
+        log.info("before heavyJob.execute()");
+        heavyJob.execute(10);
+        log.info("after heavyJob.execute()");
+
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "Success");
+        response.put("message", "完了");
+        return response;
+    }
 }
+

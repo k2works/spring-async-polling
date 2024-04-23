@@ -36,4 +36,18 @@ $(function () {
         });
     });
 
+    $("#execBtn").on("click", function () {
+        $("#result").text("処理中");
+        $.ajax({
+            type: "PUT",
+            url: CONTEXT_PATH + "api/tasks",
+            dataType: "json"
+        }).done(function (data) {
+            console.log(data)
+            $("#result").text(data.message)
+        }).fail(function (jqXHR, textStatus) {
+            $("#result").text("失敗")
+        })
+    })
+
 });

@@ -9,10 +9,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class HeavyJob {
     @Async
-    public void execute() {
+    public void execute(long timeout) {
         log.info("before heavy task");
         try {
-            TimeUnit.SECONDS.sleep(10);
+            TimeUnit.SECONDS.sleep(timeout);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
